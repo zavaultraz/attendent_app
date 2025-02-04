@@ -9,6 +9,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   bool isObscureText = true;
+  bool isObsecureTextConfirm = true;
   bool isLoading = false;
 
   final FirebaseService _auth = FirebaseService();
@@ -16,9 +17,15 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController nameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController(); // New controller for last name
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController rolePasswordContorller = TextEditingController();
+
+  // Added role selection
+  String? selectedRole = 'user'; // Default role is 'user'
+  final List<String> roles = ['user', 'admin'];
 
   void _signUp() async {
     if (_formKey.currentState!.validate()) {
@@ -34,8 +41,9 @@ class _SignUpPageState extends State<SignUpPage> {
       if (user != null) {
         await _firestore.collection('users').doc(user.uid).set({
           'name': nameController.text,
+          'lastName': lastNameController.text, // Store last name
           'email': emailController.text,
-          'password': passwordController.text,
+          'role': selectedRole, // Store selected role
         });
 
         Navigator.pushReplacementNamed(context, '/home');
@@ -82,34 +90,46 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+
+                        child: Text(
+                          'Register Now',
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold,fontSize: 28),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
-                    width: query9(context),
+
                     child: Text(
-                      welcomeText,
-                      style: welcomeTextStyle,
+                      'make easy than before',
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.black54),
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 8 ,
                   ),
-                  SizedBox(
-                    width: query9(context),
-                    child: Text(
-                      subWelcomeText,
-                      style: subWelcomeTextStyle,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('Profile',style: GoogleFonts.poppins(fontWeight: FontWeight.w500,color: Colors.black,fontSize: 16),textAlign: TextAlign.start,),
+                      ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 7,),
                   SizedBox(
                     width: query9(context),
                     child: TextFormField(
                       controller: nameController,
                       decoration: InputDecoration(
-                        hintText: "Name",
+                        hintText: "First Name",
                         prefixIcon: const Icon(Icons.person),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -119,7 +139,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Nama tidak boleh kosong';
+                          return 'Nama depan tidak boleh kosong';
                         }
                         return null;
                       },
@@ -127,6 +147,39 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(
                     height: 10,
+                  ),
+                  SizedBox(
+                    width: query9(context),
+                    child: TextFormField(
+                      controller: lastNameController, // Last name input
+                      decoration: InputDecoration(
+                        hintText: "Last Name",
+                        prefixIcon: const Icon(Icons.person),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.next,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Nama belakang tidak boleh kosong';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('Account',style: GoogleFonts.poppins(fontWeight: FontWeight.w500,color: Colors.black,fontSize: 16),textAlign: TextAlign.start,),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     width: query9(context),
@@ -157,9 +210,48 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  SizedBox(width: query9(context), child: Text("Role")),
+                  // Role dropdown
+                  SizedBox(
+                    width: query9(context),
+                    child: DropdownButtonFormField<String>(
+                      value: selectedRole,
+                      items: roles.map((String role) {
+                        return DropdownMenuItem<String>(
+                          value: role,
+                          child: Text(role),
+                        );
+                      }).toList(),
+                      onChanged: (String? newRole) {
+                        setState(() {
+                          selectedRole = newRole!;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Select Role',
+                        prefixIcon: const Icon(Icons.group),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a role';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                   const SizedBox(
-                    height: 10,
+                    height: 15,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('Security',style: GoogleFonts.poppins(fontWeight: FontWeight.w500,color: Colors.black,fontSize: 16),textAlign: TextAlign.start,),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     width: query9(context),
@@ -213,10 +305,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              isObscureText = !isObscureText;
+                              isObsecureTextConfirm = !isObsecureTextConfirm;
                             });
                           },
-                          icon: isObscureText
+                          icon: isObsecureTextConfirm
                               ? const Icon(
                             Icons.visibility_off,
                           )
@@ -228,7 +320,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      obscureText: isObscureText ? true : false,
+                      obscureText: isObsecureTextConfirm ? true : false,
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.done,
                       validator: (value) {
@@ -265,7 +357,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       child: Text(
                         hintSignUp,
-                        style: hintTextStyle,
+                        style: GoogleFonts.poppins(fontWeight: FontWeight.w600,fontSize: 18,color: Colors.white)
                       ),
                     ),
                   ),
@@ -278,61 +370,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintOtherSignUpOption,
                       style: subWelcomeTextStyle,
                       textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: query9(context),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              margin: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                image: const DecorationImage(
-                                  image: imageGoogle,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              hintGoogle,
-                              style: welcomeTextStyle.copyWith(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              margin: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                image: const DecorationImage(
-                                  image: imageFacebook,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              hintFacebook,
-                              style: welcomeTextStyle.copyWith(
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
                   ),
                   const SizedBox(
@@ -356,7 +393,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           },
                           child: Text(
                             hintSignIn,
-                            style: welcomeTextStyle.copyWith(fontSize: 14),
+                            style: GoogleFonts.poppins(fontSize: 16,color: colorPrimary,fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],

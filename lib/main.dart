@@ -1,16 +1,19 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi/ui/pages.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.debug,
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      // data ambil dari file google-services.json
+        apiKey: 'AIzaSyDJYbSJWnd4V7fXKqIjzfFKS4mIXn5V-DY', // current_key
+        appId: '1:981464828391:android:e7ea5330662a6df9265542', // mobilesdk_app_id
+        messagingSenderId: '243811762198', // project_number
+        projectId: 'presensi-ed3e7' // project_id
+    ),
   );
-  await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
   runApp(const MyApp());
 }
 
@@ -28,11 +31,12 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/sign-in': (context) => const SignInPage(),
-        '/sign-up': (context) => const SignUpPage(),
-        '/home': (context) => const HomePage(),
+        '/sign-in': (context) => SignInPage(),
+        '/sign-up': (context) => SignUpPage(),
+        '/home': (context) => HomePage(),
+        '/note' : (context) => NotePage()
       },
-      home: const SignInPage(),
+      home: SignInPage(),
     );
   }
 }

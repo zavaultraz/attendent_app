@@ -7,14 +7,12 @@ double query9(BuildContext context) {
 final colorPrimary = '1D1C36FF'.toColor();
 final colorWhite = 'FFFFFFFF'.toColor();
 
-const imageLogo = AssetImage("assets/images/barelang.jpeg");
+const imageLogo = AssetImage("assets/images/berelang.jpeg");
 const imageGoogle = AssetImage("assets/icon/google.png");
 const imageFacebook = AssetImage("assets/icon/facebook.png");
 
 const welcomeText = 'Welcome Back ✋';
-const subWelcomeText = 'Have a nice day! \nLet\'s'
-    'start your day with a smile 😊 '
-    'and a cup of coffee ☕';
+const subWelcomeText = 'Lets start your day';
 
 const hintEmail = 'Email';
 const hintPassword = 'Password';
@@ -30,8 +28,8 @@ const hintDoesntHaveAccout = "Don't have an account?";
 const hintAlreadyHaveAccout = "Already have an account?";
 
 TextStyle welcomeTextStyle = GoogleFonts.poppins(
-  fontSize: 20,
-  fontWeight: FontWeight.w500,
+  fontSize: 24,
+  fontWeight: FontWeight.w700,
   color: Colors.black,
 );
 TextStyle subWelcomeTextStyle = GoogleFonts.poppins(

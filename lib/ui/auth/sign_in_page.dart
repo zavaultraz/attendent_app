@@ -46,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
         child: Column(
           children: [
             const SizedBox(
-              height: 50,
+              height: 120,
             ),
             Container(
               width: query9(context),
@@ -60,23 +60,27 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-              width: query9(context),
-              child: Text(
-                welcomeText,
-                style: welcomeTextStyle,
-              ),
-            ),
-            const SizedBox(
               height: 10,
             ),
             SizedBox(
               width: query9(context),
               child: Text(
+                welcomeText,
+                style: GoogleFonts.varelaRound(
+                    fontSize: 28, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(
+              width: query9(context),
+              child: Text(
                 subWelcomeText,
-                style: subWelcomeTextStyle,
+                style: GoogleFonts.varelaRound(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(
@@ -94,6 +98,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
                 keyboardType: TextInputType.emailAddress,
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
                 textInputAction: TextInputAction.next,
               ),
             ),
@@ -115,11 +120,11 @@ class _SignInPageState extends State<SignInPage> {
                     },
                     icon: isObscureText
                         ? const Icon(
-                      Icons.visibility_off,
-                    )
+                            Icons.visibility_off,
+                          )
                         : const Icon(
-                      Icons.visibility,
-                    ),
+                            Icons.visibility,
+                          ),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -127,6 +132,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 obscureText: isObscureText ? true : false,
                 keyboardType: TextInputType.visiblePassword,
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
                 textInputAction: TextInputAction.done,
               ),
             ),
@@ -161,7 +167,10 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 child: Text(
                   hintSignIn,
-                  style: hintTextStyle,
+                  style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16),
                 ),
               ),
             ),
@@ -187,8 +196,8 @@ class _SignInPageState extends State<SignInPage> {
                   Row(
                     children: [
                       Container(
-                        width: 50,
-                        height: 50,
+                        width: 30,
+                        height: 30,
                         margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
@@ -209,8 +218,8 @@ class _SignInPageState extends State<SignInPage> {
                   Row(
                     children: [
                       Container(
-                        width: 50,
-                        height: 50,
+                        width: 30,
+                        height: 30,
                         margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
@@ -232,7 +241,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             SizedBox(
               width: query9(context),
