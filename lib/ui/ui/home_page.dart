@@ -63,7 +63,9 @@ class _HomePageState extends State<HomePage> {
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/home-attendance');
+                          },
                           child: Text(
                             'Absen',
                             style: GoogleFonts.poppins(
@@ -89,7 +91,9 @@ class _HomePageState extends State<HomePage> {
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(context, '/profile');
+                          },
                           child: Text(
                             'Profile',
                             style: GoogleFonts.poppins(

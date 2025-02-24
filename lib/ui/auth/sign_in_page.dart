@@ -38,6 +38,110 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  void _forgotPassword() {
+    final TextEditingController emailController2 = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            'Forgot Password',
+            style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // Menghindari overflow
+            children: [
+              Text(
+                'Masukkan email Anda untuk mengatur ulang kata sandi.',
+                style: GoogleFonts.poppins(fontSize: 14),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: emailController2,
+                decoration: InputDecoration(
+                  hintText: 'Masukkan email Anda',
+                  prefixIcon: const Icon(Icons.email),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                textInputAction: TextInputAction.done,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Batal',
+                style: GoogleFonts.poppins(color: Colors.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                final email = emailController2.text.trim();
+
+                if (email.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Email tidak boleh kosong'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                try {
+                  await firebaseService.forgotPassword(email);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Email reset password telah dikirim!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  emailController2.clear();
+                  Navigator.pop(context);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Terjadi kesalahan: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorPrimary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Kirim',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,7 +246,7 @@ class _SignInPageState extends State<SignInPage> {
             SizedBox(
               width: query9(context),
               child: GestureDetector(
-                onTap: () {},
+                onTap: _forgotPassword,
                 child: Text(
                   hintForgotPassword,
                   textAlign: TextAlign.end,

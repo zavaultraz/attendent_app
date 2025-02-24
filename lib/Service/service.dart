@@ -115,4 +115,48 @@ class FirebaseService {
       "content": content,
     });
   }
+
+  Future<void> forgotPassword(String email) async {
+    if (email.isEmpty) {
+      throw Exception("Email cannot be empty");
+    }
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw Exception("Failed to send reset password");
+    }
+  }
+
+  Future<void> loadProfile() async{
+    String? userId = _auth.currentUser!.uid;
+    await FirebaseFirestore.instance.collection("users").doc(userId).get();
+  }
+
+  Future<void> updateProfile(
+      String name, String lastname) async {
+    String? userId = _auth.currentUser!.uid;
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .update({
+      "name": name,
+      "lastname": lastname,
+    });
+  }
+
+  Future<void> UploadProfileImage(String imageUrl) async{
+    String? userId = _auth.currentUser!.uid;
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      'profileImage' : imageUrl
+    });
+  }
+
+  Future<void> verfyEmail()async{
+    if(_auth.currentUser != null && !_auth.currentUser!.emailVerified){
+      await _auth.currentUser!.sendEmailVerification();
+
+    }
+  }
+
+
 }
