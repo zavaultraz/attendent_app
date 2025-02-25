@@ -17,7 +17,7 @@ class HomeAttendence extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/leave');
+                Navigator.pushNamed(context, '/leave-page');
               },
               child: Text("Check Out"),
             ),

@@ -28,4 +28,5 @@ part 'ui/profile_page.dart';
 part 'ui/change_password_page.dart';
 part 'ui/home_attendence.dart';
 part 'ui/attendance/attendance/attendance_page.dart';
-part 'ui/attendance/attendance//camera_page.dart';
+part 'ui/attendance/attendance/camera_page.dart';
+part 'ui/attendance/leave/leave_page.dart';
