@@ -8,6 +8,7 @@ class LeavePage extends StatefulWidget {
 }
 
 class _LeavePageState extends State<LeavePage> {
+  // Deklarasi variabel dan controller
   String strAddress = '';
   String strDate = '';
   String strTime = '';
@@ -23,20 +24,20 @@ class _LeavePageState extends State<LeavePage> {
   var categoryList = <String>["Please Choose", "Sick", "Permission", "Other"];
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    fetchUser(); // Memanggil fetchUser untuk mendapatkan data user
   }
 
   Future<void> fetchUser() async {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? 'Unknow';
-    if (userId == 'unKnow') {
+    if (userId == 'Unknow') {
       return;
     }
     try {
-      DocumentSnapshot userDoc =
-          await firestore.collection('users').doc(userId).get();
+      DocumentSnapshot userDoc = await firestore.collection('users').doc(userId).get();
       print("userDoc : ${userDoc.data()}");
       String name = userDoc['name'];
       String lastName = userDoc['lastName'];
@@ -49,30 +50,109 @@ class _LeavePageState extends State<LeavePage> {
     }
   }
 
-  showLoaderDialog(BuildContext context) {
+  Future<void> submitAbsent(String name, String status, String from, String until) async {
+    showloaderDialog(context);
+
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "Unknow";
+    print("user id = $userId");
+
+    if (userId == "Unknow") {
+      print("Error: User ID not found");
+      return;
+    }
+
+    DocumentReference userDocRef = firestore.collection('users').doc(userId);
+    CollectionReference attendanceCollection = userDocRef.collection('attendance');
+
+    attendanceCollection.add({
+      'name': name,
+      'description': status,
+      'date time': '$from-$until',
+      'createdAt': FieldValue.serverTimestamp(),
+    }).then((result) {
+      print("Data berhasil disimpan dengan id = ${result.id}");
+      setState(() {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(
+                  CupertinoIcons.check_mark_circled,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "Yeyyy, laporan berhasil terkirim",
+                  style: GoogleFonts.poppins(color: Colors.white),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.greenAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: StadiumBorder(),
+          ),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeAttendence()),
+        );
+      });
+    }).catchError((error) {
+      print("Error menyimpan data: $error");
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                CupertinoIcons.xmark_circle, // Ikon error
+                color: Colors.white,
+              ),
+              SizedBox(width: 10),
+              Text(
+                "Oops, terjadi kesalahan. Coba lagi.",
+                style: GoogleFonts.poppins(color: Colors.white),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.redAccent, // Warna merah untuk error
+          behavior: SnackBarBehavior.floating,
+          shape: StadiumBorder(),
+        ),
+      );
+    });
+  }
+
+  void showloaderDialog(BuildContext context) {
     AlertDialog alertDialog = AlertDialog(
       content: Row(
         children: [
           CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
           ),
-          Container(
-            margin: EdgeInsets.only(left: 7),
-            child: Text('Please Wait'),
-          )
+          SizedBox(width: 10), // Menambahkan jarak antara loading indicator dan teks
+          Text(
+            'Please Wait.....',
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
         ],
       ),
     );
+
     showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return alertDialog;
-        });
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alertDialog;
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Leave Page'),
@@ -124,12 +204,14 @@ class _LeavePageState extends State<LeavePage> {
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                     labelText: "Your Name",
                     hintText: "Please enter your name",
-                    hintStyle: const TextStyle(
-                      fontSize: 14,
+                    hintStyle: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                       color: Colors.grey,
                     ),
-                    labelStyle: const TextStyle(
-                      fontSize: 14,
+                    labelStyle: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
                       color: Colors.black,
                     ),
                     border: OutlineInputBorder(
@@ -141,20 +223,19 @@ class _LeavePageState extends State<LeavePage> {
                       borderSide: const BorderSide(color: Colors.blueAccent),
                     ),
                   ),
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600, fontSize: 16),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 20),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Text(
                     "Leave Type",
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 5),
                   child: Container(
@@ -180,60 +261,141 @@ class _LeavePageState extends State<LeavePage> {
                   child: Row(
                     children: [
                       Expanded(
-                          child: Row(
-                        children: [
-                          Text(
-                            'From',
-                            style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: formController,
-                              onTap: () async {
-                                DateTime? pickDateTime = await showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime(1990),
-                                    lastDate: DateTime(9999),
-                                    initialDate: DateTime.now());
-                              },
-                              style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                        child: Row(
+                          children: [
+                            Text(
+                              'From',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w500),
                             ),
-                          ),
-                        ],
-                      )),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: formController,
+                                onTap: () async {
+                                  DateTime? pickDateTime =
+                                  await showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(1990),
+                                      lastDate: DateTime(9999),
+                                      initialDate: DateTime.now());
+                                  if (pickDateTime != null) {
+                                    formController.text =
+                                        DateFormat('dd/M/yyyy')
+                                            .format(pickDateTime);
+                                  }
+                                },
+                                style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Expanded(
-                          child: Row(
-                        children: [
-                          Text(
-                            'Until',
-                            style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: formController,
-                              onTap: () async {
-                                DateTime? pickDateTime = await showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime(1990),
-                                    lastDate: DateTime(9999),
-                                    initialDate: DateTime.now());
-                              },
-                              style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Until',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w500),
                             ),
-                          ),
-                        ],
-                      ),)
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: toController,
+                                onTap: () async {
+                                  DateTime? pickDateTime =
+                                  await showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(1990),
+                                      lastDate: DateTime(9999),
+                                      initialDate: DateTime.now());
+                                },
+                                style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                )
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(8),
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        width: size.width * 0.8,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.white),
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.blueAccent,
+                          child: InkWell(
+                            splashColor: Colors.blue,
+                            borderRadius: BorderRadius.circular(25),
+                            onTap: () {
+                              // Validasi form sebelum submit
+                              if (controllerName.text.isEmpty ||
+                                  dropValue == "Please Choose" ||
+                                  formController.text.isEmpty ||
+                                  toController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Row(
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.info,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Please fill all the form",
+                                          style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueAccent,
+                                    shape: StadiumBorder(),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              } else {
+                                // Panggil submitAbsent
+                                submitAbsent(
+                                  controllerName.text,
+                                  dropValue,
+                                  formController.text,
+                                  toController.text,
+                                );
+                              }
+                            },
+                            child: Center(
+                              child: Text(
+                                'Submit',
+                                style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

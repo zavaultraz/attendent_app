@@ -1,5 +1,4 @@
 part of '../pages.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -16,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     User? user = _auth.currentUser;
-    userId = user!.uid;
+    userId = user?.uid;
     userData = _auth.getUserData(userId!);
   }
 
@@ -28,108 +27,114 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder<Map<String, dynamic>>(
-            future: userData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text('error fetch data'),
-                );
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text('user data not found'),
-                );
-              }
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: userData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('User data not found'));
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Email : ${_auth.currentUser.email}'),
-                    Text('name : ${snapshot.data!['name']}'),
-                    Text('role : ${snapshot.data!['role']}'),
-                    Text('Id : ${userId}'),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green),
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/home-attendance');
-                          },
-                          child: Text(
-                            'Absen',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange),
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/note');
-                          },
-                          child: Text(
-                            'Note',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue),
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/profile');
-                          },
-                          child: Text(
-                            'Profile',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 18,
-                    ),
                     GestureDetector(
                       onTap: () {
-                        _signOut();
+                        Scaffold.of(context).openDrawer();
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.red),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Log out',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18),
-                          ),
-                        ),
+                      child: Text(
+                        'Woku',
+                        style: GoogleFonts.concertOne(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.blueAccent),
                       ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.logout, color: Colors.red ,size: 30,),
+                      onPressed: _signOut,
                     ),
                   ],
                 ),
-              );
-            }));
+                SizedBox(height: 20),
+                Text(
+                  'Hello, ${snapshot.data!['name']} ${snapshot.data!['lastname']} 👋',
+                  style: GoogleFonts.poppins(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome to Woku',
+                              style: GoogleFonts.poppins(fontSize: 43, fontWeight: FontWeight.bold, color: Colors.white),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              'Manage your attendance easily',
+                              style: GoogleFonts.poppins(fontSize: 13, color: Colors.white70,fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Image.asset('assets/images/illustration.png', height: 140,width: 140,),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text('Mau ngapain nih',style: GoogleFonts.poppins(fontSize: 26,fontWeight: FontWeight.w600),),
+                SizedBox(height: 15),
+                Column(
+                  children: [
+                    _buildFeatureButton(Icons.check_circle, 'Absen', Colors.green, '/home-attendance'),
+                    SizedBox(height: 15),
+                    _buildFeatureButton(Icons.note_alt, 'Note', Colors.orange, '/note'),
+                    SizedBox(height: 15),
+                    _buildFeatureButton(Icons.person, 'Profile', Colors.blue, '/profile'),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFeatureButton(IconData icon, String title, Color color, String route) {
+    return InkWell(
+      onTap: () => Navigator.pushReplacementNamed(context, route),
+      child: Container(
+        padding: EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 30, color: Colors.white),
+            SizedBox(width: 10),
+            Text(
+              title,
+              style: GoogleFonts.poppins(fontSize: 25, fontWeight: FontWeight.w600, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
