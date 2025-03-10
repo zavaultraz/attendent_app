@@ -62,8 +62,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Hello, ${snapshot.data!['name']} ${snapshot.data!['lastname']} 👋',
-                  style: GoogleFonts.poppins(fontSize: 30, fontWeight: FontWeight.bold),
+                  'Hello,\n${snapshot.data!['name']} ${snapshot.data!['lastname']} 👋',
+                  style: GoogleFonts.poppins(fontSize: 35, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
                 Container(
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Text(
                               'Welcome to Woku',
-                              style: GoogleFonts.poppins(fontSize: 43, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: GoogleFonts.poppins(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                             SizedBox(height: 5),
                             Text(
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
     return InkWell(
       onTap: () => Navigator.pushReplacementNamed(context, route),
       child: Container(
-        padding: EdgeInsets.all(30),
+        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(12),

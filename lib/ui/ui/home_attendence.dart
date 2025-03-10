@@ -78,7 +78,7 @@ class HomeAttendence extends StatelessWidget {
                     '/leave-page', context),
                 SizedBox(height: 10),
                 _buildFeatureButton(
-                    Icons.history, 'History', Colors.blue, '/history', context),
+                    Icons.history, 'History', Colors.blue, '/history-page', context),
               ],
             ),
           ],

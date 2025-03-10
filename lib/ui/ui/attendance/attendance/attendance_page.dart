@@ -1,4 +1,16 @@
-part of '../../../pages.dart';
+import 'dart:io';
+
+import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'package:presensi/ui/pages.dart';
+import 'package:presensi/ui/ui/attendance/attendance/camera_page.dart';
+
 class AttendancePage extends StatefulWidget {
   final XFile? image;
   const AttendancePage({super.key, this.image});
@@ -20,12 +32,15 @@ class _AttendancePageState extends State<AttendancePage> {
   double dLat = 0.0;
   double dLong = 0.0;
   final controllerName = TextEditingController();
-  final CollectionReference dataCollection =
-  FirebaseFirestore.instance.collection('attendance');
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  String userId = FirebaseAuth.instance.currentUser?.uid ?? "unknown";
+
 
   @override
   void initState() {
     super.initState();
+
+    fetchUserName();
 
     image = widget.image;
     setDateTime();
@@ -37,7 +52,42 @@ class _AttendancePageState extends State<AttendancePage> {
     }
   }
 
+  Future<void> fetchUserName() async {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "unknown";
+
+    if (userId == "unknown") return;
+
+    try {
+      DocumentSnapshot userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        String firstName = userDoc['name'] ?? '';
+        String lastName = userDoc['lastName'] ?? '';
+        String fullName = '$firstName $lastName'.trim(); // Menggabungkan nama
+
+        setState(() {
+          controllerName.text = fullName; // Mengisi field dengan nama pengguna
+        });
+      }
+    } catch (e) {
+      print("Error mengambil nama pengguna: $e");
+    }
+  }
+
   Future<void> submitAbsen(String alamat, String nama, String status) async {
+
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "unknown";
+    print("User ID: $userId"); // Debugging
+
+    if (userId == "unknown") {
+      print("Error: User ID not found");
+      return;
+    }
+
+    DocumentReference userDocRef = firestore.collection('users').doc(userId);
+    CollectionReference attendanceCollection = userDocRef.collection('attendance');
+
     if (nama.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Nama tidak boleh kosong!"),
@@ -49,11 +99,12 @@ class _AttendancePageState extends State<AttendancePage> {
     showLoaderDialog(context);
 
     try {
-      await dataCollection.add({
+      await attendanceCollection.add({
         'address': alamat,
         'name': nama,
         'description': status,
-        'datetime': strDateTime
+        'datetime': strDateTime,
+        'createdAt': FieldValue.serverTimestamp(),
       });
 
       Navigator.of(context).pop();
@@ -69,7 +120,8 @@ class _AttendancePageState extends State<AttendancePage> {
         behavior: SnackBarBehavior.floating,
       ));
 
-      Navigator.pushReplacementNamed(context, '/home-attendance');
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) => const HomePage()));
     } catch (e) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -267,7 +319,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   onTap: () {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CameraPage()));
+                        MaterialPageRoute(builder: (context) => const  CameraPage()));
                   },
                   child: Container(
                     margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
@@ -295,6 +347,7 @@ class _AttendancePageState extends State<AttendancePage> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: TextField(
+                    enabled: false,
                     textInputAction: TextInputAction.done,
                     keyboardType: TextInputType.text,
                     controller: controllerName,

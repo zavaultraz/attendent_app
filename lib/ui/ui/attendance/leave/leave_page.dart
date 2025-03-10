@@ -155,7 +155,16 @@ class _LeavePageState extends State<LeavePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Leave Page'),
+      elevation: 0,
+      backgroundColor: Colors.blueAccent,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: const Text(
+        "Permission Form",
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
       ),
       body: SingleChildScrollView(
         child: Card(

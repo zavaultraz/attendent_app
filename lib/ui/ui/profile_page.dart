@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     String? userId = FirebaseAuth.instance.currentUser!.uid;
     Reference refrence =
-        FirebaseStorage.instance.ref().child("profile/$userId");
+    FirebaseStorage.instance.ref().child("profile/$userId");
     UploadTask uploadTask = refrence.putFile(imageFile);
     TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
     String imageUrl = await taskSnapshot.ref.getDownloadURL();
@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (pickedImage != null) {
       setState(() {
         imageFile = File(pickedImage.path);
@@ -53,61 +53,6 @@ class _ProfilePageState extends State<ProfilePage> {
     if (imageFile != null) {
       _uploadImage(imageFile!);
     }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    _loadProfileDate();
-    super.initState();
-  }
-
-  void _checkEmail() async {
-    setState(() {
-      isLoading = true;
-    });
-    User? user = _auth.currentUser;
-    if (!user!.emailVerified) {
-      await user.sendEmailVerification();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'email verification has been sended',
-          style: GoogleFonts.ibmPlexSans(
-              fontWeight: FontWeight.w600, color: Colors.white),
-        ),
-        backgroundColor: Colors.green,
-      ));
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
-
-  void _loadProfileDate() async {
-    User? user = _auth.currentUser;
-    String userId = user!.uid;
-    Map<String, dynamic> userData = await _auth.getUserData(userId);
-    nameController.text = userData['name'];
-    lastNameController.text = userData['lastName'];
-  }
-
-  void _sendEmailVerification() async {
-    setState(() {
-      isLoading = true;
-    });
-    User? user = _auth.currentUser;
-    await user?.sendEmailVerification();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        'email verification has been sended',
-        style: GoogleFonts.ibmPlexSans(
-            fontWeight: FontWeight.w600, color: Colors.white),
-      ),
-      backgroundColor: Colors.green,
-    ));
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void _updateProfile() async {
@@ -124,136 +69,114 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void _sendEmailVerification() async {
+    setState(() {
+      isLoading = true;
+    });
+    User? user = _auth.currentUser;
+    await user?.sendEmailVerification();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'Email verification has been sent',
+        style: GoogleFonts.ibmPlexSans(
+            fontWeight: FontWeight.w600, color: Colors.white),
+      ),
+      backgroundColor: Colors.green,
+    ));
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
-            onTap: () {
+            onTap: (){
               Navigator.pushReplacementNamed(context, '/home');
             },
-            child: Text('Profile')),
+            child: Text('Edit Profile', style: GoogleFonts.concertOne(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white))),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: imageFile != null
-                      ? FileImage(imageFile!)
-                      : profileImage != null
-                          ? NetworkImage(profileImage!)
-                          : const AssetImage('assets/images/berelang.jpeg'),
-                ),
-                Positioned(
-                  child: GestureDetector(
-                      onTap: _pickImage,
-                      child: Icon(CupertinoIcons.camera_circle_fill)),
-                  bottom: 0,
-                  right: 0,
-                )
-              ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            TextFormField(
-              controller: nameController,
-              decoration: InputDecoration(
-                hintText: 'Edit your name',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              keyboardType: TextInputType.name,
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
-              textInputAction: TextInputAction.done,
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            TextFormField(
-              controller: lastNameController,
-              decoration: InputDecoration(
-                hintText: 'Edit your last name',
-                prefixIcon: const Icon(Icons.person),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              keyboardType: TextInputType.name,
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
-              textInputAction: TextInputAction.done,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: (){
-                    Navigator.pushReplacementNamed(context, '/change-password');
-                  },
-                  child: Text(
-                    'Reset Password',
-                    style: GoogleFonts.ibmPlexSans(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: Colors.black54),
-                    textAlign: TextAlign.end,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: imageFile != null
+                        ? FileImage(imageFile!)
+                        : profileImage != null
+                        ? NetworkImage(profileImage!) as ImageProvider
+                        : const AssetImage('assets/images/berelang.jpeg'),
                   ),
-                ),
-              ],
-            ),
-
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: colorPrimary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                            // Ganti dengan warna yang diinginkan
-                            ),
-                      )
-                    : GestureDetector(
-                        onTap: _updateProfile,
-                        child: Text(
-                          'Kirim',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(CupertinoIcons.camera_fill, color: colorPrimary),
                       ),
-              ),
-            ),
-            (FirebaseAuth.instance.currentUser!.emailVerified)
-                ? Text('Email Verified',
-                    style: GoogleFonts.ibmPlexSans(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        color: Colors.black))
-                : TextButton(
-                    onPressed: _sendEmailVerification,
-                    child: Text(
-                      'Send email verification',
-                      style: GoogleFonts.ibmPlexSans(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.black),
                     ),
                   ),
-          ],
+                ],
+              ),
+              Text('nama'),
+              Text('email'),
+              const SizedBox(height: 30),
+              TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'First Name',
+                  prefixIcon: const Icon(Icons.person),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: lastNameController,
+                decoration: InputDecoration(
+                  labelText: 'Last Name',
+                  prefixIcon: const Icon(Icons.person),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _updateProfile,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text('Update Profile', style: GoogleFonts.poppins(fontSize: 16, color: Colors.white)),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: _sendEmailVerification,
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Text('Send Email Verification', style: GoogleFonts.ibmPlexSans(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.blueAccent)),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

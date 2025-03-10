@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:presensi/ui/pages.dart';
+import 'package:presensi/ui/ui/attendance/attendance/attendance_page.dart';
 
 
 void main() async {
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/attendance-page' : (context)=> AttendancePage(),
         '/home-attendance' : (context)=> HomeAttendence(),
         '/leave-page' : (context)=> LeavePage(),
+        '/history-page' : (context)=> HistoryPage(),
 
       },
       home: SignInPage(),
