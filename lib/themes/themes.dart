@@ -11,8 +11,8 @@ const imageLogo = AssetImage("assets/images/berelang.jpeg");
 const imageGoogle = AssetImage("assets/icon/google.png");
 const imageFacebook = AssetImage("assets/icon/facebook.png");
 
-const welcomeText = 'Welcome Back ✋';
-const subWelcomeText = 'Lets start your day';
+const welcomeText = 'Welcome Back';
+const subWelcomeText = 'enter your detail below';
 
 const hintEmail = 'Email';
 const hintPassword = 'Password';

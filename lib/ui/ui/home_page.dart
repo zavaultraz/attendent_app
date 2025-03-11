@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Hello,\n${snapshot.data!['name']} ${snapshot.data!['lastname']} 👋',
+                  'Hello,\n${snapshot.data!['name']} ${snapshot.data!['lastName']} 👋',
                   style: GoogleFonts.poppins(fontSize: 35, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),

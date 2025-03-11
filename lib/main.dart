@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/sign-up': (context) => SignUpPage(),
         '/home': (context) => HomePage(),
         '/note' : (context) => NotePage(),
-        '/profile' : (context) => ProfilePage(),
+        '/profile' : (context) => OnboardingScreen(),
         '/change-password' : (context) => ChangePasswordPage(),
         '/attendance-page' : (context)=> AttendancePage(),
         '/home-attendance' : (context)=> HomeAttendence(),
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         '/history-page' : (context)=> HistoryPage(),
 
       },
-      home: SignInPage(),
+      home: SplashScreen(),
     );
   }
 }

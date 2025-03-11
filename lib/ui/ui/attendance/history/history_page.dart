@@ -8,6 +8,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  final dataService = DataServiceHistoryAttendance();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +25,36 @@ class _HistoryPageState extends State<HistoryPage> {
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
-      body: Center(
-        child: Text('ini adalah body'),
-      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: dataService.getAttendanceStream(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if(snapshot.hasError){
+            return Center(
+              child: Text("Gagal mengambil data",style: GoogleFonts.poppins(fontSize: 20,fontWeight: FontWeight.w500),),
+            );
+          }
+          if(!snapshot.hasData || snapshot.data!.docs.isEmpty){
+            return Center(
+              child: Text("belum ada data",style: GoogleFonts.poppins(fontSize: 20,fontWeight: FontWeight.w500),),
+            );
+          }
+          final data = snapshot.data!.docs;
+          return ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context,index){
+                return AttendanceCardWidget(
+                  data : data[index].data() as Map<String,dynamic>,
+                  attendanceId : data[index].id,
+                );
+              },
+          );
+        },
+      )
     );
   }
 }

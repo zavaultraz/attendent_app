@@ -153,14 +153,9 @@ class _SignInPageState extends State<SignInPage> {
               height: 120,
             ),
             Container(
-              width: query9(context),
-              height: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: const DecorationImage(
-                  image: imageLogo,
-                  fit: BoxFit.cover,
-                ),
+              child: Text(
+                  'Woku',
+                  style:  GoogleFonts.concertOne(fontSize: 100, fontWeight: FontWeight.bold, color: Colors.blueAccent)
               ),
             ),
             const SizedBox(
@@ -264,7 +259,7 @@ class _SignInPageState extends State<SignInPage> {
                   _login();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorPrimary,
+                  backgroundColor: Colors.blueAccent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

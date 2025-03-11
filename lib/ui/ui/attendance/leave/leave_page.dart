@@ -67,7 +67,8 @@ class _LeavePageState extends State<LeavePage> {
     attendanceCollection.add({
       'name': name,
       'description': status,
-      'date time': '$from-$until',
+      'datetime': '$from-$until',
+      'address' : strAddress,
       'createdAt': FieldValue.serverTimestamp(),
     }).then((result) {
       print("Data berhasil disimpan dengan id = ${result.id}");
@@ -320,6 +321,11 @@ class _LeavePageState extends State<LeavePage> {
                                       firstDate: DateTime(1990),
                                       lastDate: DateTime(9999),
                                       initialDate: DateTime.now());
+                                  if (pickDateTime != null) {
+                                    toController.text =
+                                        DateFormat('dd/M/yyyy')
+                                            .format(pickDateTime);
+                                  }
                                 },
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w500),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +14,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:presensi/ui/ui/attendance/history/widget/attendance_card_widget.dart';
 
 import '../Service/service.dart';
 import '../themes/shared.dart';
@@ -29,3 +31,6 @@ part 'ui/change_password_page.dart';
 part 'ui/home_attendence.dart';
 part 'ui/attendance/leave/leave_page.dart';
 part 'ui/attendance/history/history_page.dart';
+part 'ui/splash_screen.dart';
+part 'ui/onboarding_screen.dart';
+part 'ui/profile_screen.dart';

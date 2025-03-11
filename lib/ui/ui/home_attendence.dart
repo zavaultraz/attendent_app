@@ -50,7 +50,7 @@ class HomeAttendence extends StatelessWidget {
                         Text(
                           'Check In & Check Out',
                           style: GoogleFonts.poppins(
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -74,7 +74,7 @@ class HomeAttendence extends StatelessWidget {
                 _buildFeatureButton(Icons.login, 'Check In', Colors.green,
                     '/attendance-page', context),
                 SizedBox(height: 10),
-                _buildFeatureButton(Icons.logout, 'Check Out', Colors.orange,
+                _buildFeatureButton(Icons.logout, 'Permission', Colors.orange,
                     '/leave-page', context),
                 SizedBox(height: 10),
                 _buildFeatureButton(
